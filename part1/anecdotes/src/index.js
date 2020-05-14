@@ -23,6 +23,8 @@ const MostVote = (props) => {
     }
   })
 
+  
+
   const text = anecdotes[select];
 
   return (

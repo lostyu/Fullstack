@@ -7,7 +7,13 @@ const App = () => {
   const [newName, setNewName] = useState('')
 
   const handleSubmit = (ev) => {
+
     ev.preventDefault()
+
+    if (!checkPersonName()) {
+      return false;
+    }
+
     const _newPerson = {
       name: newName
     }
@@ -17,6 +23,19 @@ const App = () => {
 
   const handleChange = (ev) => {
     setNewName(ev.target.value)
+  }
+
+  const checkPersonName = () => {
+    if (newName === '') {
+      return false;
+    }
+
+    if (persons.some((person) => person.name === newName)) {
+      alert(`${newName} is already added to phonebook`)
+      return false;
+    }
+
+    return true;
   }
 
   return (
@@ -32,7 +51,7 @@ const App = () => {
       </form>
       <h2>Numbers</h2>
       {persons.map(person => (
-        <p>{person.name}</p>
+        <p key={person.name}>{person.name}</p>
       ))}
     </div>
   )
