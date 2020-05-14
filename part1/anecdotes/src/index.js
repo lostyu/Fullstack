@@ -11,6 +11,29 @@ const Vote = (props) => {
   )
 }
 
+const MostVote = (props) => {
+
+  const { points, anecdotes } = props;
+  let most = 0;
+  let select = 0;
+  points.forEach((p, index) => {
+    if (most < p) {
+      most = p;
+      select = index;
+    }
+  })
+
+  const text = anecdotes[select];
+
+  return (
+    <div>
+      <h2>Anecdote with most votes</h2>
+      <p>{text}</p>
+      <p>has {most} votes</p>
+    </div>
+  )
+}
+
 const App = (props) => {
   const arr = new Array(props.anecdotes.length).fill(0)
   const [selected, setSelected] = useState(0)
@@ -31,9 +54,11 @@ const App = (props) => {
 
   return (
     <div>
+      <h2>Anecdote of the day</h2>
       <div><button onClick={handleNext}>next anecdote</button></div>
       {props.anecdotes[selected]}
       <Vote vote={curVote} handleVote={handleVote} />
+      <MostVote anecdotes={props.anecdotes} points={points} />
     </div>
   )
 }
