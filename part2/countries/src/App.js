@@ -8,7 +8,7 @@ const Search = (props) => {
   )
 }
 
-const Countries = ({ search, countries }) => {
+const Countries = ({ search, countries, handleShow }) => {
   if (search === '') {
     return null;
   }
@@ -23,7 +23,7 @@ const Countries = ({ search, countries }) => {
     return (
       <ul>
         {countries.map(country => (
-          <li key={country.name}>{country.name}</li>
+          <li key={country.name}>{country.name}<button onClick={()=>handleShow(country.name)}>show</button></li>
         ))}
       </ul>
     )
@@ -66,13 +66,17 @@ const App = () => {
     setSearch(ev.target.value)
   }
 
+  const handleShow = (name) => {
+    setSearch(name)
+  }
+
   const filterCountries = countries.filter(country => country.name.toLowerCase().includes(search.toLowerCase()))
 
 
   return (
     <div>
       <Search search={search} handleSearchChange={handleSearchChange} />
-      <Countries countries={filterCountries} search={search} />
+      <Countries countries={filterCountries} search={search} handleShow={handleShow} />
     </div>
   )
 }
