@@ -72,6 +72,19 @@ const App = () => {
     return true;
   }
 
+  const handleDel = (id) => {
+    const p = persons.find((person => person.id === id))
+    if (window.confirm(`Delete ${p.name}?`)) {
+      personService.del_person(id).then(() => {
+        console.log('删除成功');
+        setPersons(persons.filter(p => p.id !== id))
+      }).catch(error => {
+        alert(`未找到id为${p.name}的数据`)
+        setPersons(persons.filter(p => p.id !== id))
+      })
+    }
+
+  }
 
   const personsFilter = persons.filter(person => person.name.toLowerCase().includes(searchText.toLowerCase()))
 
@@ -82,7 +95,7 @@ const App = () => {
       <h3>Add a new</h3>
       <PersonForm handleChange={handleChange} handleSubmit={handleSubmit} handleNumChange={handleNumChange} newName={newName} newNum={newNum} />
       <h3>Numbers</h3>
-      <Persons persons={personsFilter} />
+      <Persons persons={personsFilter} handleDel={handleDel} />
     </div>
   )
 }
