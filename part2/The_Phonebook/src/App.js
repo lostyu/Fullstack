@@ -29,6 +29,25 @@ const App = () => {
       return false;
     }
 
+    if (persons.some((person) => person.name === newName)) {
+      if (window.confirm(`${newName} is already added to phonebook, replace the old number with a new one?`)) {
+        const p = persons.find((person => person.name === newName))
+        const changePerson = { ...p, number: newNum }
+
+        personService
+          .update(p.id, changePerson)
+          .then(response => {
+            setPersons(persons.map(person => person.id !== p.id ? person : response))
+            setNewName('')
+            setNewNum('')
+          })
+
+        return false;
+      } else {
+        return false;
+      }
+    }
+
     const _newPerson = {
       name: newName,
       number: newNum
@@ -61,11 +80,6 @@ const App = () => {
     }
 
     if (newNum === '') {
-      return false;
-    }
-
-    if (persons.some((person) => person.name === newName)) {
-      alert(`${newName} is already added to phonebook`)
       return false;
     }
 
