@@ -4,12 +4,15 @@ import personService from './services/persons';
 import Filter from './components/Filter';
 import PersonForm from './components/PersonForm';
 import Persons from './components/Persons';
+import Notification from './components/Notification';
 
 const App = () => {
   const [persons, setPersons] = useState([])
   const [newName, setNewName] = useState('')
   const [newNum, setNewNum] = useState('')
   const [searchText, setSearchText] = useState('')
+  const [message, setMessage] = useState(null)
+  const [type, setType] = useState('success')
 
   const hook = () => {
     personService
@@ -40,6 +43,13 @@ const App = () => {
             setPersons(persons.map(person => person.id !== p.id ? person : response))
             setNewName('')
             setNewNum('')
+
+            setType('success')
+            setMessage(`update ${changePerson.name} number is ${changePerson.number}`)
+            setTimeout(() => {
+              setMessage(null)
+            }, 5000)
+
           })
 
         return false;
@@ -59,6 +69,12 @@ const App = () => {
         setPersons(persons.concat(returnedPerson))
         setNewName('')
         setNewNum('')
+
+        setType('success')
+        setMessage(`Added ${_newPerson.name}`)
+        setTimeout(() => {
+          setMessage(null)
+        }, 5000);
       })
   }
 
@@ -90,11 +106,25 @@ const App = () => {
     const p = persons.find((person => person.id === id))
     if (window.confirm(`Delete ${p.name}?`)) {
       personService.del_person(id).then(() => {
-        console.log('删除成功');
         setPersons(persons.filter(p => p.id !== id))
+
+        setType('success')
+        setMessage(`删除${p.name}成功`)
+        setTimeout(() => {
+          setMessage(null)
+        }, 5000)
+
+
       }).catch(error => {
-        alert(`未找到id为${p.name}的数据`)
+
         setPersons(persons.filter(p => p.id !== id))
+
+        setType('error')
+        setMessage(`未找到id为${p.name}的数据`)
+        setTimeout(() => {
+          setMessage(null)
+        }, 5000)
+
       })
     }
 
@@ -105,6 +135,7 @@ const App = () => {
   return (
     <div>
       <h2>Phonebook</h2>
+      <Notification message={message} type={type} />
       <Filter handleSearchChange={handleSearchChange} text={searchText} />
       <h3>Add a new</h3>
       <PersonForm handleChange={handleChange} handleSubmit={handleSubmit} handleNumChange={handleNumChange} newName={newName} newNum={newNum} />
