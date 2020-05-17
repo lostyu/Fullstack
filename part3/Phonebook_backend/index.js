@@ -27,6 +27,13 @@ let persons = [
   }
 ]
 
+const generateId = () => {
+  const maxId = persons.length > 0
+    ? Math.max(...persons.map(p => p.id))
+    : 0
+
+  return maxId + 1;
+}
 
 app.get('/api/persons', (req, res) => {
   res.json(persons)
@@ -59,6 +66,32 @@ app.delete('/api/persons/:id', (req, res) => {
   const id = Number(req.params.id)
   persons = persons.filter(p => p.id !== id)
   res.status(204).end()
+})
+
+
+app.post('/api/persons', (req, res) => {
+  const body = req.body
+
+  if (body.name === '' || body.number === '') {
+    return res.status(400).json({
+      error: 'name or number missing'
+    })
+  }
+
+  if (persons.some(p => p.name === body.name)) {
+    return res.status(200).json({
+      error: `${body.name} is exists`
+    })
+  }
+
+  const person = {
+    name: body.name,
+    number: body.number,
+    id: generateId()
+  }
+
+  persons = persons.concat(person)
+  res.json(persons)
 })
 
 
