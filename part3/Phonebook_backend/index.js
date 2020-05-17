@@ -33,6 +33,14 @@ app.get('/api/persons', (req, res) => {
 })
 
 
+app.get('/info', (req, res) => {
+  res.contentType('html')
+  const text = `
+    <p>Phonebook has info for ${persons.length} people</p>
+    <p>${new Date()}</p>
+  `;
+  res.end(text)
+})
 
 
 
