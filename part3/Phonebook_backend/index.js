@@ -73,6 +73,15 @@ app.get('/api/persons/:id', (req, res) => {
 
 app.delete('/api/persons/:id', (req, res) => {
   const id = Number(req.params.id)
+
+  let person = persons.find(p => p.id === id)
+
+  if (!person) {
+    return res.status(400).json({
+      error: `not found ${id}`
+    })
+  }
+
   persons = persons.filter(p => p.id !== id)
   res.status(204).end()
 })
@@ -100,9 +109,29 @@ app.post('/api/persons', (req, res) => {
   }
 
   persons = persons.concat(person)
-  res.json(persons)
+  res.json(person)
 })
 
+app.put('/api/persons/:id', (req, res) => {
+  const id = Number(req.params.id)
+  let person = persons.find(p => p.id === id)
+  const body = req.body
+
+  if (!person) {
+    return res.status(400).json({
+      error: `not found id ${id}`
+    })
+  }
+
+  if (body.name === '' || body.number === '') {
+    return res.status(400).json({
+      error: `name or number is not null`
+    })
+  }
+
+  person = { ...body }
+  res.json(person)
+})
 
 const PORT = 3001
 app.listen(PORT, () => {

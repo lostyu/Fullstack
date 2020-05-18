@@ -120,7 +120,7 @@ const App = () => {
         setPersons(persons.filter(p => p.id !== id))
 
         setType('error')
-        setMessage(`未找到id为${p.name}的数据`)
+        setMessage(`未找到${p.name}的数据`)
         setTimeout(() => {
           setMessage(null)
         }, 5000)
