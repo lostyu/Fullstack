@@ -11,12 +11,12 @@ const url = `mongodb+srv://mongoose123:${password}@cluster0-fjvjp.azure.mongodb.
 
 mongoose.connect(url, { useUnifiedTopology: true, useNewUrlParser: true })
 
-const phonebookSchema = new mongoose.Schema({
+const personSchema = new mongoose.Schema({
   name: String,
   number: String
 })
 
-const PhoneBook = mongoose.model('PhoneBook', phonebookSchema)
+const Person = mongoose.model('Person', personSchema)
 
 if (process.argv.length < 5 && process.argv.length > 3) {
   console.log('give name and number argument');
@@ -24,7 +24,7 @@ if (process.argv.length < 5 && process.argv.length > 3) {
 }
 
 if (process.argv.length === 5) {
-  const person = new PhoneBook({
+  const person = new Person({
     name: process.argv[3],
     number: process.argv[4]
   })
@@ -36,10 +36,10 @@ if (process.argv.length === 5) {
 }
 
 if (process.argv.length === 3) {
-  PhoneBook.find({}).then(res => {
+  Person.find({}).then(res => {
     console.log('phonebook:');
-    res.forEach(book => {
-      console.log(book.name, ' ', book.number);
+    res.forEach(p => {
+      console.log(p.name, ' ', p.number);
     })
 
     mongoose.connection.close()

@@ -1,7 +1,9 @@
+require('dotenv').config()
 const express = require('express');
 const app = express()
 const morgan = require('morgan')
 const cors = require('cors')
+const Person = require('./models/person')
 
 morgan.token('type', (req, res) => {
   if (req.method === 'POST') {
@@ -48,7 +50,9 @@ const generateId = () => {
 }
 
 app.get('/api/persons', (req, res) => {
-  res.json(persons)
+  Person.find({}).then(persons => {
+    res.json(persons.map(person => person.toJSON()))
+  })
 })
 
 
@@ -62,35 +66,34 @@ app.get('/info', (req, res) => {
 })
 
 app.get('/api/persons/:id', (req, res) => {
-  const id = Number(req.params.id)
-  const person = persons.find(p => p.id === id)
-
-  if (person) {
-    res.json(person)
-  } else {
-    res.status(404).end()
-  }
-
+  const id = req.params.id
+  Person.findById(id)
+    .then(person => {
+      res.json(person.toJSON())
+    })
+    .catch(err => {
+      console.log(err.message);
+      res.status(404).end()
+    })
 })
 
 
 app.delete('/api/persons/:id', (req, res) => {
-  const id = Number(req.params.id)
+  const id = req.params.id
 
-  let person = persons.find(p => p.id === id)
-
-  if (!person) {
-    return res.status(400).json({
-      error: `not found ${id}`
+  Person.findById(id)
+    .then(person => {
+      Person.deleteOne({ _id: id }).then(result => {
+        res.status(204).end()
+      })
     })
-  }
-
-  persons = persons.filter(p => p.id !== id)
-  res.status(204).end()
+    .catch(error => {
+      res.status(404).end()
+    })
 })
 
 
-app.post('/api/persons', (req, res) => {
+app.post('/api/persons', async (req, res) => {
   const body = req.body
 
   if (body.name === '' || body.number === '') {
@@ -99,41 +102,59 @@ app.post('/api/persons', (req, res) => {
     })
   }
 
-  if (persons.some(p => p.name === body.name)) {
+  let person = await Person.find({ name: body.name })
+  if (person.length > 0) {
     return res.status(200).json({
       error: `${body.name} is exists`
     })
   }
 
-  const person = {
+  const new_person = new Person({
     name: body.name,
-    number: body.number,
-    id: generateId()
-  }
+    number: body.number
+  })
 
-  persons = persons.concat(person)
-  res.json(person)
+  new_person.save().then(result => {
+    res.json(result.toJSON())
+  })
+
 })
 
 app.put('/api/persons/:id', (req, res) => {
-  const id = Number(req.params.id)
-  let person = persons.find(p => p.id === id)
+  const id = req.params.id
   const body = req.body
-
-  if (!person) {
-    return res.status(400).json({
-      error: `not found id ${id}`
-    })
-  }
 
   if (body.name === '' || body.number === '') {
     return res.status(400).json({
-      error: `name or number is not null`
+      error: `not found name or number`
     })
   }
 
-  person = { ...body }
-  res.json(person)
+  Person.findById(id)
+    .then(p => {
+      p.updateOne(body).then(result => {
+        res.json({ ...p.toJSON(), ...body })
+      })
+    })
+    .catch(err => {
+      console.log(err);
+      res.status(404).end()
+    })
+
+  // if (!person) {
+  //   return res.status(400).json({
+  //     error: `not found id ${id}`
+  //   })
+  // }
+
+  // if (body.name === '' || body.number === '') {
+  //   return res.status(400).json({
+  //     error: `name or number is not null`
+  //   })
+  // }
+
+  // person = { ...body }
+  // res.json(person)
 })
 
 const PORT = 3001
