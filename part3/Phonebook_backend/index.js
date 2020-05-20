@@ -20,6 +20,18 @@ app.use(cors())
 app.use(express.static('build'))
 
 
+app.get('/info', (req, res) => {
+  Person.find({})
+    .then(result => {
+      result = result.map(item => item.toJSON())
+      res.send(`
+        <h2>phonebook:</h2>
+        <p>person length is ${result.length}</p>
+      `).end()
+    })
+})
+
+
 app.post('/api/persons', async (req, res, next) => {
   const body = req.body
 
