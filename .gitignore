@@ -2,3 +2,4 @@ demo_node
 demo_part1
 node_modules
 .vscode
+.env
