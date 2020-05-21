@@ -35,30 +35,16 @@ app.get('/info', (req, res) => {
 app.post('/api/persons', async (req, res, next) => {
   const body = req.body
 
-  if (body.name === '' || body.number === '') {
-    return res.status(400).json({
-      error: 'name or number missing'
-    })
-  }
+  const person = new Person({
+    name: body.name,
+    number: body.number
+  })
 
-  Person.find({ name: body.name })
-    .then(person => {
-      if (person.length > 0) {
-        res.status(400).json({ error: `${body.name} is exists` })
-      } else {
-        const new_person = new Person({
-          name: body.name,
-          number: body.number
-        })
-
-        new_person.save().then(result => {
-          res.json(result.toJSON())
-        })
-      }
+  person.save()
+    .then(savedPerson => {
+      res.json(savedPerson.toJSON())
     })
     .catch(error => next(error))
-
-
 
 })
 
