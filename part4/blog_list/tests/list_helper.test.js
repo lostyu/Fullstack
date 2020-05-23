@@ -75,3 +75,20 @@ describe('mostBlogs', () => {
   })
 
 })
+
+
+describe('mostlike', () => {
+  test('of empty', () => {
+    expect(listHelper.mostlike([])).toBe(null)
+  })
+
+  test('of one list', () => {
+    expect(listHelper.mostlike(listWithOneBlog)).toEqual({ author: 'Edsger W. Dijkstra', likes: 5 })
+  })
+
+
+  test('of many list', () => {
+    expect(listHelper.mostlike(blogs)).toEqual({ 'author': 'Edsger W. Dijkstra', 'likes': 17 })
+  })
+
+})

@@ -58,9 +58,38 @@ const mostBlogs = (blogs) => {
     }
 }
 
+const mostlike = (blogs) => {
+  let result = {}
+  let max = 0
+  let k = ''
+
+  lodash.forEach(blogs, (blog => {
+    if (result[blog.author]) {
+      result[blog.author] += blog.likes
+    } else {
+      result[blog.author] = blog.likes
+    }
+  }))
+
+  lodash.forIn(result, (val, key) => {
+    if (max < val) {
+      max = val
+      k = key
+    }
+  })
+
+  return blogs.length === 0
+    ? null
+    : {
+      author: k,
+      likes: max
+    }
+}
+
 module.exports = {
   dummy,
   totalLikes,
   favoriteBlog,
-  mostBlogs
+  mostBlogs,
+  mostlike
 }
