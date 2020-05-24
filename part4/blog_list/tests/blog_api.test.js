@@ -125,7 +125,87 @@ describe('property test', () => {
 
 
 
+describe('DELETE', () => {
+  test('delete a blog id is ok', async () => {
+    const blogs = await helper.dataInDb()
+    const blog = blogs[0]
 
+    await api
+      .delete(`/api/blogs/${blog.id}`)
+      .expect(204)
+  })
+
+  test('delete a blog id is null', async () => {
+    const id = await helper.nonExistingId()
+
+    await api
+      .delete(`/api/blogs/${id}`)
+      .expect(204)
+  })
+
+  test('delete a blog id is error', async () => {
+    const id = '123jifosdjjka'
+
+    await api
+      .delete(`/api/blogs/${id}`)
+      .expect(400)
+  })
+
+})
+
+
+
+describe('PUT', () => {
+  test('update a blog with id ok', async () => {
+    const blogs = await helper.dataInDb()
+    const data = {
+      title: 'test put1111111111111111',
+      url: 'http://testurl1111111111111.com',
+      author: 'tony111111111111111111',
+      likes: 111111111111111
+    }
+
+    await api
+      .put(`/api/blogs/${blogs[0].id}`)
+      .send(data)
+      .expect(200)
+
+  })
+
+  test('update a blog with id null', async () => {
+    const id = '5ec9f31ba437fe2f682723e2'
+    const data = {
+      title: 'test put1111111111111111',
+      url: 'http://testurl1111111111111.com',
+      author: 'tony111111111111111111',
+      likes: 111111111111111
+    }
+
+    await api
+      .put(`/api/blogs/${id}`)
+      .send(data)
+      .expect(404)
+
+  })
+
+
+  test('update a blog with id error', async () => {
+    const id = '5ec9f31f682723e2'
+    const data = {
+      title: 'test put1111111111111111',
+      url: 'http://testurl1111111111111.com',
+      author: 'tony111111111111111111',
+      likes: 111111111111111
+    }
+
+    await api
+      .put(`/api/blogs/${id}`)
+      .send(data)
+      .expect(400)
+
+  })
+
+})
 
 
 afterAll(() => {

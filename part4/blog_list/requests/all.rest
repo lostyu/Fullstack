@@ -10,3 +10,17 @@ Content-Type: application/json
   "url": "http://34trf.com",
   "likes": "999"
 }
+###
+
+DELETE http://localhost:3001/api/blogs/5ec779c11e53cb0f9c1f
+###
+
+PUT http://localhost:3001/api/blogs/5ec78f37e5743714d
+Content-Type: application/json
+
+{
+  "title": "test put",
+  "url": "http://testurl.com",
+  "author": "tony",
+  "likes": 9999
+}

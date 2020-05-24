@@ -26,7 +26,7 @@ const blogs = [
 ]
 
 const nonExistingId = async () => {
-  const blog = new Blog({ url: 'http://xxjjoopp.com' })
+  const blog = new Blog({ title: 'xx', url: 'http://xxjjoopp.com' })
   await blog.save()
   await blog.remove()
 
