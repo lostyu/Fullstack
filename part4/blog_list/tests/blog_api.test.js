@@ -56,6 +56,7 @@ describe('POST', () => {
       .expect('Content-Type', /application\/json/)
 
     const blogs = await helper.dataInDb()
+    console.log(blogs)
     expect(blogs).toHaveLength(helper.blogs.length + 1)
 
     const authors = blogs.map(r => r.author)
@@ -81,6 +82,47 @@ describe('POST', () => {
 
 
 })
+
+
+describe('property test', () => {
+  test('test id property', async () => {
+    const blogs = await helper.dataInDb()
+
+    expect(blogs[0].id).toBeDefined()
+  })
+
+
+  test('like is null defaults 0', async () => {
+    const blog = {
+      title: 'test222',
+      author: 'tony t',
+      url: 'http://iieo3902.com',
+    }
+
+    let result = await api
+      .post('/api/blogs')
+      .send(blog)
+      .expect(201)
+
+    expect(result.body.likes).toBe(0)
+  })
+
+  test('need title and url ', async () => {
+    const blog = {
+      author: 'tony oopp'
+    }
+
+    await api
+      .post('/api/blogs')
+      .send(blog)
+      .expect(400)
+
+    const blogs = await helper.dataInDb()
+    expect(blogs).toHaveLength(helper.blogs.length)
+  })
+
+})
+
 
 
 
