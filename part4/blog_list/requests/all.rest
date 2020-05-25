@@ -3,13 +3,13 @@ GET http://localhost:3001/api/blogs
 
 POST http://localhost:3001/api/blogs
 Content-Type: application/json
+Authorization: bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6ImpheSIsImlkIjoiNWVjYmE4ZGI4ZDQxMjcyODA4ZDQ1MGI2IiwiaWF0IjoxNTkwNDEzMjQzfQ.v2V6GKg2avbAE3bPgOiSu_WloJoGLLMyZVmaWf8vj2A
 
 {
   "title": "jiko",
   "author": "tony",
-  "url": "http://123jokk.com",
-  "likes": "999",
-  "userid": "5ecb7786bf47de0aa014ff0b"
+  "url": "http://token2.com",
+  "likes": "999"
 }
 ###
 
