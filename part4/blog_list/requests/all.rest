@@ -24,3 +24,15 @@ Content-Type: application/json
   "author": "tony",
   "likes": 9999
 }
+
+
+
+### user
+POST http://localhost:3001/api/users
+Content-Type: application/json
+
+{
+  "username": "tony222",
+  "name": "ty",
+  "password": "1111"
+}
