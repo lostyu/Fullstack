@@ -7,8 +7,9 @@ Content-Type: application/json
 {
   "title": "jiko",
   "author": "tony",
-  "url": "http://34trf.com",
-  "likes": "999"
+  "url": "http://123jokk.com",
+  "likes": "999",
+  "userid": "5ecb7786bf47de0aa014ff0b"
 }
 ###
 
@@ -36,3 +37,6 @@ Content-Type: application/json
   "name": "ty",
   "password": "1111"
 }
+###
+
+GET http://localhost:3001/api/users
