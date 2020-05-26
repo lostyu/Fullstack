@@ -1,11 +1,13 @@
 const blogRouter = require('express').Router()
 const jwt = require('jsonwebtoken')
+const middleware = require('../utils/middleware')
 const Blog = require('../models/blog')
 const User = require('../models/user')
 
 
 
 blogRouter.get('/', async (request, response) => {
+  console.log(request.decodedToken)
   const blogs = await Blog.find({}).populate('user', { username: 1, name: 1 })
   response.json(blogs.map(blog => blog.toJSON()))
 })
@@ -13,7 +15,7 @@ blogRouter.get('/', async (request, response) => {
 blogRouter.post('/', async (request, response) => {
   // 从中间件里拿到token
   const token = request.token
-  console.log(token)
+
   // 验证token
   const decodedToken = jwt.verify(token, process.env.SECRET)
 
@@ -39,9 +41,23 @@ blogRouter.post('/', async (request, response) => {
   response.status(201).json(result.toJSON())
 })
 
-blogRouter.delete('/:id', async (request, response) => {
-  await Blog.findByIdAndRemove(request.params.id)
-  response.status(204).end()
+blogRouter.delete('/:id', middleware.checkToken, async (request, response) => {
+  const decodedToken = request.decodedToken
+  console.log(decodedToken)
+
+  // 验证token是否和blog里面的用户一致
+  const blog = await Blog.findById(request.params.id)
+
+  if (!blog) {
+    return response.status(404).end()
+  }
+
+  if (blog.user.toString() === decodedToken.id) {
+    await blog.remove()
+    response.status(204).end()
+  } else {
+    response.status(400).json({ error: '你没有删除该博客的权限' })
+  }
 
 })
 
