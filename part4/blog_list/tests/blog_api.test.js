@@ -2,8 +2,9 @@ const mongoose = require('mongoose')
 const app = require('../app')
 const supertest = require('supertest')
 const api = supertest(app)
-const Blog = require('../models/blog')
 const helper = require('./test_helper')
+const Blog = require('../models/blog')
+const User = require('../models/user')
 
 // 每次测试重新生成数据
 beforeEach(async () => {
@@ -17,6 +18,12 @@ beforeEach(async () => {
 
   await Promise.all(promiseArr)
   console.log('end init data')
+
+
+  await User.deleteMany({})
+  const userObjects = helper.users.map(user => new User(user))
+  const promiseUserArr = userObjects.map(user => user.save())
+  await Promise.all(promiseUserArr)
 })
 
 describe('GET', () => {
@@ -41,7 +48,7 @@ describe('GET', () => {
 })
 
 describe('POST', () => {
-  test('add a valid blog be added', async () => {
+  test('not authorized 401', async () => {
     const blog = {
       title: 'testblog',
       author: 'jack',
@@ -51,6 +58,23 @@ describe('POST', () => {
 
     await api
       .post('/api/blogs')
+      .send(blog)
+      .expect(401)
+  })
+
+  test('add a valid blog be added', async () => {
+    const { token } = await helper.loginAndGetToken(api)
+
+    const blog = {
+      title: 'testblog',
+      author: 'jack',
+      url: 'http://justtest.com',
+      likes: 0
+    }
+
+    await api
+      .post('/api/blogs')
+      .set('Authorization', 'bearer ' + token)
       .send(blog)
       .expect(201)
       .expect('Content-Type', /application\/json/)
@@ -64,6 +88,8 @@ describe('POST', () => {
   })
 
   test('add a un valid blog not be added', async () => {
+    const { token } = await helper.loginAndGetToken(api)
+
     const blog = {
       title: 'testblog',
       author: 'jack',
@@ -73,6 +99,7 @@ describe('POST', () => {
 
     await api
       .post('/api/blogs')
+      .set('Authorization', 'bearer ' + token)
       .send(blog)
       .expect(400)
 
@@ -93,6 +120,8 @@ describe('property test', () => {
 
 
   test('like is null defaults 0', async () => {
+    const { token } = await helper.loginAndGetToken(api)
+
     const blog = {
       title: 'test222',
       author: 'tony t',
@@ -102,12 +131,14 @@ describe('property test', () => {
     let result = await api
       .post('/api/blogs')
       .send(blog)
+      .set('Authorization', 'bearer ' + token)
       .expect(201)
 
     expect(result.body.likes).toBe(0)
   })
 
   test('need title and url ', async () => {
+    const { token } = await helper.loginAndGetToken(api)
     const blog = {
       author: 'tony oopp'
     }
@@ -115,6 +146,7 @@ describe('property test', () => {
     await api
       .post('/api/blogs')
       .send(blog)
+      .set('Authorization', 'bearer ' + token)
       .expect(400)
 
     const blogs = await helper.dataInDb()
@@ -126,28 +158,53 @@ describe('property test', () => {
 
 
 describe('DELETE', () => {
-  test('delete a blog id is ok', async () => {
+  test('delete with no token 401', async () => {
     const blogs = await helper.dataInDb()
     const blog = blogs[0]
 
     await api
       .delete(`/api/blogs/${blog.id}`)
-      .expect(204)
+      .expect(401)
+  })
+
+  test('delete a blog id is ok', async () => {
+    const { token, id } = await helper.loginAndGetToken(api)
+    const blogs = await helper.dataInDb()
+    const blog = blogs[0]
+
+
+    if (blog.user.toString() === id) {
+      await api
+        .delete(`/api/blogs/${blog.id}`)
+        .set('Authorization', 'bearer ' + token)
+        .expect(204)
+    } else {
+      await api
+        .delete(`/api/blogs/${blog.id}`)
+        .set('Authorization', 'bearer ' + token)
+        .expect(401)
+    }
+
+
   })
 
   test('delete a blog id is null', async () => {
+    const { token } = await helper.loginAndGetToken(api)
     const id = await helper.nonExistingId()
 
     await api
       .delete(`/api/blogs/${id}`)
-      .expect(204)
+      .set('Authorization', 'bearer ' + token)
+      .expect(404)
   })
 
   test('delete a blog id is error', async () => {
+    const { token } = await helper.loginAndGetToken(api)
     const id = '123jifosdjjka'
 
     await api
       .delete(`/api/blogs/${id}`)
+      .set('Authorization', 'bearer ' + token)
       .expect(400)
   })
 

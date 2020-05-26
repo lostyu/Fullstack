@@ -56,7 +56,7 @@ blogRouter.delete('/:id', middleware.checkToken, async (request, response) => {
     await blog.remove()
     response.status(204).end()
   } else {
-    response.status(400).json({ error: '你没有删除该博客的权限' })
+    response.status(401).json({ error: '你没有删除该博客的权限' })
   }
 
 })
