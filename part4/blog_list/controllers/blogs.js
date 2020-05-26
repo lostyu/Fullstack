@@ -3,16 +3,7 @@ const jwt = require('jsonwebtoken')
 const Blog = require('../models/blog')
 const User = require('../models/user')
 
-// 1获取认证token
-const getTokenFrom = req => {
-  const authentication = req.get('authorization')
 
-  if (authentication && authentication.toLowerCase().startsWith('bearer')) {
-    return authentication.substring(7)
-  }
-
-  return null
-}
 
 blogRouter.get('/', async (request, response) => {
   const blogs = await Blog.find({}).populate('user', { username: 1, name: 1 })
@@ -20,9 +11,9 @@ blogRouter.get('/', async (request, response) => {
 })
 
 blogRouter.post('/', async (request, response) => {
-  // 从headers里拿到token
-  const token = getTokenFrom(request)
-
+  // 从中间件里拿到token
+  const token = request.token
+  console.log(token)
   // 验证token
   const decodedToken = jwt.verify(token, process.env.SECRET)
 
