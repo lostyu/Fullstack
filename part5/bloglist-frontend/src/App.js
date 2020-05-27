@@ -8,6 +8,7 @@ const App = () => {
   const [username, setUsername] = useState('')
   const [password, setPassword] = useState('')
   const [user, setUser] = useState(null)
+  const [blog, setBlog] = useState({ title: '', author: '', url: '' })
 
   useEffect(() => {
     (async () => {
@@ -27,8 +28,9 @@ const App = () => {
     ev.preventDefault()
 
     const user = await loginService.login({ username, password })
-
+    blogService.setToken(user.token)
     window.localStorage.setItem('loggedUser', JSON.stringify(user))
+
     setUser(user)
     setUsername('')
     setPassword('')
@@ -37,6 +39,21 @@ const App = () => {
   const handleLogout = () => {
     window.localStorage.removeItem('loggedUser')
     setUser(null)
+  }
+
+  const handleCreate = async (ev) => {
+    ev.preventDefault()
+
+    const newBlog = await blogService.create(blog)
+    setBlogs(blogs.concat(newBlog))
+    setBlog({ title: '', author: '', url: '' })
+  }
+
+  const updateField = e => {
+    setBlog({
+      ...blog,
+      [e.target.name]: e.target.value
+    })
   }
 
   const loginForm = () => (
@@ -63,6 +80,41 @@ const App = () => {
     </form>
   )
 
+  const newBlogForm = () => (
+    <div>
+      <form onSubmit={handleCreate}>
+        <div>
+          title:
+          <input
+            type="text"
+            value={blog.title}
+            name="title"
+            onChange={updateField}
+          />
+        </div>
+        <div>
+          author:
+          <input
+            type="text"
+            value={blog.author}
+            name="author"
+            onChange={updateField}
+          />
+        </div>
+        <div>
+          url:
+          <input
+            type="text"
+            value={blog.url}
+            name="url"
+            onChange={updateField}
+          />
+        </div>
+        <button type="submit">create</button>
+      </form>
+    </div>
+  )
+
   if (user === null) {
     return (
       <div>
@@ -76,6 +128,9 @@ const App = () => {
     <div>
       <h2>blogs</h2>
       <p>{user.username} logged in <button onClick={handleLogout}>logout</button></p>
+
+      <h2>create new</h2>
+      {newBlogForm()}
 
       {blogs.map(blog =>
         <Blog key={blog.id} blog={blog} />
