@@ -1,7 +1,10 @@
 import React, { useState, useEffect } from 'react'
-import Blog from './components/Blog'
+import './App.css'
 import blogService from './services/blogs'
 import loginService from './services/login'
+
+import Blog from './components/Blog'
+import Notifications from './components/Notifications'
 
 const App = () => {
   const [blogs, setBlogs] = useState([])
@@ -9,6 +12,8 @@ const App = () => {
   const [password, setPassword] = useState('')
   const [user, setUser] = useState(null)
   const [blog, setBlog] = useState({ title: '', author: '', url: '' })
+  const [message, setMessage] = useState(null)
+  const [type, setType] = useState('success')
 
   useEffect(() => {
     (async () => {
@@ -27,13 +32,27 @@ const App = () => {
   const handleLogin = async (ev) => {
     ev.preventDefault()
 
-    const user = await loginService.login({ username, password })
-    blogService.setToken(user.token)
-    window.localStorage.setItem('loggedUser', JSON.stringify(user))
+    try {
+      const user = await loginService.login({ username, password })
+      blogService.setToken(user.token)
+      window.localStorage.setItem('loggedUser', JSON.stringify(user))
 
-    setUser(user)
-    setUsername('')
-    setPassword('')
+      setUser(user)
+      setUsername('')
+      setPassword('')
+      setType('success')
+      setMessage(`login success, welcome ${user.username}`)
+      setTimeout(() => {
+        setMessage(null)
+      }, 5000)
+
+    } catch (e) {
+      setType('error')
+      setMessage(e.response.data.error)
+      setTimeout(() => {
+        setMessage(null)
+      }, 5000)
+    }
   }
 
   const handleLogout = () => {
@@ -44,9 +63,24 @@ const App = () => {
   const handleCreate = async (ev) => {
     ev.preventDefault()
 
-    const newBlog = await blogService.create(blog)
-    setBlogs(blogs.concat(newBlog))
-    setBlog({ title: '', author: '', url: '' })
+    try {
+      const newBlog = await blogService.create(blog)
+      setBlogs(blogs.concat(newBlog))
+      setBlog({ title: '', author: '', url: '' })
+
+      setType('success')
+      setMessage(`a new blog added! by ${user.username}`)
+      setTimeout(() => {
+        setMessage(null)
+      }, 5000)
+
+    } catch (e) {
+      setType('error')
+      setMessage(e.response.data.error)
+      setTimeout(() => {
+        setMessage(null)
+      }, 5000)
+    }
   }
 
   const updateField = e => {
@@ -119,6 +153,7 @@ const App = () => {
     return (
       <div>
         <h2>Log in to application</h2>
+        <Notifications message={message} type={type} />
         {loginForm()}
       </div>
     )
@@ -127,6 +162,7 @@ const App = () => {
   return (
     <div>
       <h2>blogs</h2>
+      <Notifications message={message} type={type} />
       <p>{user.username} logged in <button onClick={handleLogout}>logout</button></p>
 
       <h2>create new</h2>
