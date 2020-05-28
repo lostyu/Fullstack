@@ -32,6 +32,12 @@ const App = () => {
     setUser(user)
   }, [])
 
+  const addLike = async (id, blog) => {
+    const likes = blog.likes + 1
+    const result = await blogService.put(id, { ...blog, likes })
+    setBlogs(blogs.map(b => b.url !== blog.url ? b : result))
+  }
+
   const handleLogin = async (ev) => {
     ev.preventDefault()
 
@@ -137,7 +143,7 @@ const App = () => {
       {newBlogForm()}
 
       {blogs.map(blog =>
-        <Blog key={blog.id} blog={blog} />
+        <Blog key={blog.id} blog={blog} addLike={addLike} />
       )}
     </div>
   )
