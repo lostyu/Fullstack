@@ -4,16 +4,19 @@ import blogService from './services/blogs'
 import loginService from './services/login'
 
 import Blog from './components/Blog'
+import NewBlogForm from './components/NewBlogForm'
 import Notifications from './components/Notifications'
+import Toggleable from './components/Toggleable'
 
 const App = () => {
   const [blogs, setBlogs] = useState([])
   const [username, setUsername] = useState('')
   const [password, setPassword] = useState('')
   const [user, setUser] = useState(null)
-  const [blog, setBlog] = useState({ title: '', author: '', url: '' })
   const [message, setMessage] = useState(null)
   const [type, setType] = useState('success')
+
+  const blogFormRef = React.createRef()
 
   useEffect(() => {
     (async () => {
@@ -60,13 +63,12 @@ const App = () => {
     setUser(null)
   }
 
-  const handleCreate = async (ev) => {
-    ev.preventDefault()
+  const handleCreate = async (blog) => {
 
     try {
+      blogFormRef.current.toggleVisible()
       const newBlog = await blogService.create(blog)
       setBlogs(blogs.concat(newBlog))
-      setBlog({ title: '', author: '', url: '' })
 
       setType('success')
       setMessage(`a new blog added! by ${user.username}`)
@@ -83,12 +85,7 @@ const App = () => {
     }
   }
 
-  const updateField = e => {
-    setBlog({
-      ...blog,
-      [e.target.name]: e.target.value
-    })
-  }
+
 
   const loginForm = () => (
     <form onSubmit={handleLogin}>
@@ -115,38 +112,9 @@ const App = () => {
   )
 
   const newBlogForm = () => (
-    <div>
-      <form onSubmit={handleCreate}>
-        <div>
-          title:
-          <input
-            type="text"
-            value={blog.title}
-            name="title"
-            onChange={updateField}
-          />
-        </div>
-        <div>
-          author:
-          <input
-            type="text"
-            value={blog.author}
-            name="author"
-            onChange={updateField}
-          />
-        </div>
-        <div>
-          url:
-          <input
-            type="text"
-            value={blog.url}
-            name="url"
-            onChange={updateField}
-          />
-        </div>
-        <button type="submit">create</button>
-      </form>
-    </div>
+    <Toggleable buttonLabel="new note" ref={blogFormRef}>
+      <NewBlogForm createBlog={handleCreate} />
+    </Toggleable>
   )
 
   if (user === null) {
