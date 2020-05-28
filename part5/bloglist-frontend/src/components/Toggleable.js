@@ -1,5 +1,5 @@
 import React, { useState, useImperativeHandle } from 'react'
-import PropTypes from 'prop-types';
+import PropTypes from 'prop-types'
 
 const Toggleable = React.forwardRef((props, ref) => {
   const [visible, setVisible] = useState(false)
