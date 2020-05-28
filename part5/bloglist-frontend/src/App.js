@@ -38,6 +38,29 @@ const App = () => {
     setBlogs(blogs.map(b => b.url !== blog.url ? b : result))
   }
 
+  const removeBlog = async (id) => {
+    if (window.confirm('delete blog?')) {
+      try {
+        await blogService.del(id)
+
+        setBlogs(blogs.filter(blog => blog.id !== id))
+
+        setType('success')
+        setMessage('delete blog success')
+        setTimeout(() => {
+          setMessage(null)
+        }, 5000)
+
+      } catch (e) {
+        setType('error')
+        setMessage(e.response.data.error)
+        setTimeout(() => {
+          setMessage(null)
+        }, 5000)
+      }
+    }
+  }
+
   const handleLogin = async (ev) => {
     ev.preventDefault()
 
@@ -118,7 +141,7 @@ const App = () => {
   )
 
   const newBlogForm = () => (
-    <Toggleable buttonLabel="new note" ref={blogFormRef}>
+    <Toggleable buttonLabel="new blog" ref={blogFormRef}>
       <NewBlogForm createBlog={handleCreate} />
     </Toggleable>
   )
@@ -142,8 +165,8 @@ const App = () => {
       <h2>create new</h2>
       {newBlogForm()}
 
-      {blogs.sort((a,b)=>b.likes-a.likes).map(blog =>
-        <Blog key={blog.id} blog={blog} addLike={addLike} />
+      {blogs.sort((a, b) => b.likes - a.likes).map(blog =>
+        <Blog user={user} key={blog.id} blog={blog} addLike={addLike} removeBlog={removeBlog} />
       )}
     </div>
   )
