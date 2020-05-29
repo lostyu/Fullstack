@@ -20,7 +20,7 @@ const NewBlogForm = ({ createBlog }) => {
   }
 
   return (
-    <div>
+    <div className="testDiv">
       <form onSubmit={handleCreate}>
         <div>
           title:
@@ -34,6 +34,7 @@ const NewBlogForm = ({ createBlog }) => {
         <div>
           author:
           <input
+            id="author"
             type="text"
             value={blog.author}
             name="author"
