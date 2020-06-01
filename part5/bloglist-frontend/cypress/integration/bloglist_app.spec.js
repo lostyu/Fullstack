@@ -35,4 +35,25 @@ describe('Blog app', function() {
         .and('have.css', 'border-color', 'rgb(255, 0, 0)')
     })
   })
+
+  describe('When logged in', function() {
+    beforeEach(function() {
+      cy.login({username: 'tony', password: '123'})
+    })
+
+    it('A blog can be created', function() {
+      // cy.createBlog({title: 'tony title', author: 'tony', url: 'tonysoul.site'})
+
+      // console.log(localStorage.getItem('loggedUser'))
+
+      cy.contains('new blog').click()
+      cy.get('#title').type('tony title')
+      cy.get('#author').type('tony')
+      cy.get('#url').type('http://tonysoul.site')
+      cy.get('#test-btn').click()
+
+      cy.get('.testDiv').should('have.css', 'display', 'block')
+      cy.contains('tony title')
+    })
+  })
 })

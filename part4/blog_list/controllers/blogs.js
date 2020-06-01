@@ -4,8 +4,6 @@ const middleware = require('../utils/middleware')
 const Blog = require('../models/blog')
 const User = require('../models/user')
 
-
-
 blogRouter.get('/', async (request, response) => {
   console.log(request.decodedToken)
   const blogs = await Blog.find({}).populate('user', { username: 1, name: 1 })
@@ -19,6 +17,7 @@ blogRouter.post('/', async (request, response) => {
   // 验证token
   const decodedToken = jwt.verify(token, process.env.SECRET)
 
+  console.log(decodedToken)
 
   if (!token || !decodedToken.id) {
     return response.status(401).json({ error: 'invalid error token' })
@@ -26,19 +25,23 @@ blogRouter.post('/', async (request, response) => {
 
   const user = await User.findById(decodedToken.id)
 
-  // 添加数据
-  const body = request.body
-  const blog = new Blog({
-    url: body.url,
-    title: body.title,
-    author: body.author,
-    user: user._id
-  })
+  if (user) {
+    // 添加数据
+    const body = request.body
+    const blog = new Blog({
+      url: body.url,
+      title: body.title,
+      author: body.author,
+      user: user._id
+    })
 
-  const result = await blog.save()
-  user.blogs = user.blogs.concat(result._id)
-  await user.save()
-  response.status(201).json(result.toJSON())
+    const result = await blog.save()
+    user.blogs = user.blogs.concat(result._id)
+    await user.save()
+    response.status(201).json(result.toJSON())
+  } else {
+    response.status(401).json({ error: 're login' })
+  }
 })
 
 blogRouter.delete('/:id', middleware.checkToken, async (request, response) => {
@@ -58,11 +61,20 @@ blogRouter.delete('/:id', middleware.checkToken, async (request, response) => {
   } else {
     response.status(401).json({ error: '你没有删除该博客的权限' })
   }
-
 })
 
 blogRouter.put('/:id', async (request, response) => {
-  const blog = await Blog.findByIdAndUpdate(request.params.id, request.body, { new: true })
+  const body = request.body
+  console.log(body)
+  const content = {
+    title: body.title,
+    author: body.author,
+    url: body.url,
+    likes: body.likes
+  }
+  const blog = await Blog.findByIdAndUpdate(request.params.id, content, {
+    new: true
+  })
 
   if (blog) {
     response.json(blog.toJSON())
