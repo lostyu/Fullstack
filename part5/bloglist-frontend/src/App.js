@@ -109,9 +109,9 @@ const App = () => {
     }
   };
 
-  // TODO test
+
   const loginForm = () => (
-    <form onSubmit={handleLogin}>
+    <form id="test-loginForm" onSubmit={handleLogin}>
       <div>
         username
         <input
