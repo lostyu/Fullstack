@@ -153,7 +153,7 @@ const App = () => {
   }
 
   return (
-    <div>
+    <div id="testApp">
       <h2>blogs</h2>
       <Notifications message={message} type={type} />
       <p>

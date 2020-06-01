@@ -38,7 +38,7 @@ describe('Blog app', function() {
 
   describe('When logged in', function() {
     beforeEach(function() {
-      cy.login({username: 'tony', password: '123'})
+      cy.login({ username: 'tony', password: '123' })
     })
 
     it('A blog can be created', function() {
@@ -56,17 +56,80 @@ describe('Blog app', function() {
       cy.contains('tony title')
     })
 
+    it('user can be add likes', function() {
+      cy.createBlog({
+        title: 'tony title',
+        author: 'tony',
+        url: 'tonysoul.site'
+      })
 
-    it('user can be add likes',function(){
-      cy.createBlog({title: 'tony title', author: 'tony', url: 'tonysoul.site'})
-      
       cy.contains('view').click()
       cy.contains('like').click()
 
       cy.contains('likes 1')
     })
+
+    it('a blog can be delete', function() {
+      cy.createBlog({
+        title: 'tony title',
+        author: 'tony',
+        url: 'tonysoul.site'
+      })
+
+      cy.contains('view').click()
+      cy.contains('remove').click()
+      cy.should('not.contain', 'tony title')
+    })
+
+    it.only('sort by likes desc', function() {
+      cy.createBlog({
+        title: 'tony title1',
+        author: 'tony1',
+        url: 'tonysoul.site1',
+        likes: 11
+      })
+      cy.createBlog({
+        title: 'tony title2',
+        author: 'tony2',
+        url: 'tonysoul.site2',
+        likes: 55
+      })
+      cy.createBlog({
+        title: 'tony title3',
+        author: 'tony3',
+        url: 'tonysoul.site3',
+        likes: 1569
+      })
+      cy.request('GET', 'http://localhost:3001/api/blogs').then(({ body }) => {
+        const [a, b, c] = body
+
+        cy.get('#testApp')
+          .find('.testDiv2:first')
+          .as('div1')
+        cy.get('@div1')
+          .contains('view')
+          .click()
+        cy.get('@div1').contains('tony title3')
+        cy.get('@div1').contains('likes 1569')
+
+        cy.get('@div1')
+          .next()
+          .as('div2')
+        cy.get('@div2')
+          .contains('view')
+          .click()
+        cy.get('@div2').contains('tony title2')
+        cy.get('@div2').contains('likes 55')
+
+        cy.get('@div2')
+          .next()
+          .as('div3')
+        cy.get('@div3')
+          .contains('view')
+          .click()
+        cy.get('@div3').contains('tony title1')
+        cy.get('@div3').contains('likes 11')
+      })
+    })
   })
-
-
-
 })
