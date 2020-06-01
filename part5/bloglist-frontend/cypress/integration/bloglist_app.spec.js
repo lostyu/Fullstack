@@ -55,5 +55,18 @@ describe('Blog app', function() {
       cy.get('.testDiv').should('have.css', 'display', 'block')
       cy.contains('tony title')
     })
+
+
+    it('user can be add likes',function(){
+      cy.createBlog({title: 'tony title', author: 'tony', url: 'tonysoul.site'})
+      
+      cy.contains('view').click()
+      cy.contains('like').click()
+
+      cy.contains('likes 1')
+    })
   })
+
+
+
 })
