@@ -26,9 +26,7 @@ const AnecdoteList = () => {
 
   const vote = async anecdote => {
     const newObject = { ...anecdote, votes: anecdote.votes + 1 }
-    await anecdoteService.update(anecdote.id, newObject)
-
-    dispatch(createVote(anecdote.id))
+    dispatch(createVote(anecdote.id, newObject))
     dispatch(messageChange(`you voted ${anecdote.content}`))
     setTimeout(() => {
       dispatch(messageDel())
