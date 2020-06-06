@@ -7,6 +7,7 @@ import {
   useHistory
 } from 'react-router-dom'
 import { useField } from './hooks'
+// import { useField } from 'react-hooks-lib'
 
 const Menu = () => {
   const padding = {
@@ -93,31 +94,37 @@ const CreateNew = props => {
   const handleSubmit = e => {
     e.preventDefault()
     props.addNew({
-      content: content.value,
-      author: author.value,
-      info: info.value,
+      content: content.props.value,
+      author: author.props.value,
+      info: info.props.value,
       votes: 0
     })
   }
 
-  console.log()
+  const handleReset = ()=>{
+    const arr = [content, author, info]
+
+    arr.forEach(item=>item.reset())
+  }
+
   return (
     <div>
       <h2>create a new anecdote</h2>
-      <form onSubmit={handleSubmit}>
+      <form onReset={handleReset} onSubmit={handleSubmit}>
         <div>
           content
-          <input {...content} />
+          <input {...content.props} />
         </div>
         <div>
           author
-          <input {...author} />
+          <input {...author.props} />
         </div>
         <div>
           url for more info
-          <input {...info} />
+          <input {...info.props} />
         </div>
         <button type="submit">create</button>
+        <input type="reset" value="reset" />
       </form>
     </div>
   )
