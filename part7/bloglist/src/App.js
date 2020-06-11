@@ -5,6 +5,7 @@ import { BrowserRouter as Router, Route, Switch } from 'react-router-dom'
 import loginService from './services/login'
 
 import BlogList from './components/BlogList'
+import Nav from './components/Nav'
 import NewBlogForm from './components/NewBlogForm'
 import Notifications from './components/Notifications'
 import Toggleable from './components/Toggleable'
@@ -97,16 +98,13 @@ const App = () => {
   return (
     <Router>
       <div id="testApp">
-        <h2>blogs</h2>
+        <Nav user={user} handleLogout={handleLogout} />
+        <h2>blog app</h2>
         <Notifications />
-        <p>
-          {user.username} logged in{' '}
-          <button onClick={handleLogout}>logout</button>
-        </p>
 
         <Switch>
           <Route path="/blogs/:id">
-            <BlogView/>
+            <BlogView />
           </Route>
           <Route path="/users/:id">
             <User />

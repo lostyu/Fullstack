@@ -52,3 +52,9 @@
   color: red;
   border-color: red;
 }
+
+
+.navbar{
+  padding: 5px;
+  background-color: #ddd;
+}
