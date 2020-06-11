@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
-import { BrowserRouter as Router, Route, Link, Switch } from 'react-router-dom'
+import { BrowserRouter as Router, Route, Switch } from 'react-router-dom'
 
 import loginService from './services/login'
 
@@ -8,6 +8,7 @@ import BlogList from './components/BlogList'
 import NewBlogForm from './components/NewBlogForm'
 import Notifications from './components/Notifications'
 import Toggleable from './components/Toggleable'
+import User from './components/User'
 import Users from './components/Users'
 
 import { setMessage } from './reducers/notificationReducer'
@@ -102,8 +103,11 @@ const App = () => {
         </p>
 
         <Switch>
+          <Route path="/users/:id">
+            <User />
+          </Route>
           <Route path="/users">
-            <Users/>
+            <Users />
           </Route>
           <Route path="/">
             {newBlogForm()}
