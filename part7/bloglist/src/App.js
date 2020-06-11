@@ -1,14 +1,16 @@
 import React, { useState, useEffect } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
+import { BrowserRouter as Router, Route, Link, Switch } from 'react-router-dom'
 
 import loginService from './services/login'
-import { setMessage } from './reducers/notificationReducer'
 
 import BlogList from './components/BlogList'
 import NewBlogForm from './components/NewBlogForm'
 import Notifications from './components/Notifications'
 import Toggleable from './components/Toggleable'
+import Users from './components/Users'
 
+import { setMessage } from './reducers/notificationReducer'
 import { addUser, removeUser } from './reducers/userReducer'
 
 import './App.css'
@@ -90,18 +92,26 @@ const App = () => {
   }
 
   return (
-    <div id="testApp">
-      <h2>blogs</h2>
-      <Notifications />
-      <p>
-        {user.username} logged in <button onClick={handleLogout}>logout</button>
-      </p>
+    <Router>
+      <div id="testApp">
+        <h2>blogs</h2>
+        <Notifications />
+        <p>
+          {user.username} logged in{' '}
+          <button onClick={handleLogout}>logout</button>
+        </p>
 
-      <h2>create new</h2>
-      {newBlogForm()}
-
-      <BlogList />
-    </div>
+        <Switch>
+          <Route path="/users">
+            <Users/>
+          </Route>
+          <Route path="/">
+            {newBlogForm()}
+            <BlogList />
+          </Route>
+        </Switch>
+      </div>
+    </Router>
   )
 }
 
