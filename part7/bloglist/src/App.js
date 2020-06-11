@@ -10,6 +10,8 @@ import Notifications from './components/Notifications'
 import Toggleable from './components/Toggleable'
 import User from './components/User'
 import Users from './components/Users'
+import BlogViewList from './components/BlogViewList'
+import BlogView from './components/BlogView'
 
 import { setMessage } from './reducers/notificationReducer'
 import { addUser, removeUser } from './reducers/userReducer'
@@ -103,6 +105,9 @@ const App = () => {
         </p>
 
         <Switch>
+          <Route path="/blogs/:id">
+            <BlogView/>
+          </Route>
           <Route path="/users/:id">
             <User />
           </Route>
@@ -111,7 +116,8 @@ const App = () => {
           </Route>
           <Route path="/">
             {newBlogForm()}
-            <BlogList />
+            {/* <BlogList /> */}
+            <BlogViewList />
           </Route>
         </Switch>
       </div>

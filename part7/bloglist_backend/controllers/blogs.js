@@ -10,6 +10,14 @@ blogRouter.get('/', async (request, response) => {
   response.json(blogs.map(blog => blog.toJSON()))
 })
 
+blogRouter.get('/:id', async (request, response) => {
+  const blog = await Blog.findById(request.params.id).populate('user', {
+    username: 1,
+    name: 1
+  })
+  response.json(blog.toJSON())
+})
+
 blogRouter.post('/', async (request, response) => {
   // 从中间件里拿到token
   const token = request.token

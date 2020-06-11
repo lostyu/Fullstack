@@ -13,7 +13,12 @@ const getAll = async () => {
   return data
 }
 
-const create = async (blog) => {
+const getById = async id => {
+  const { data } = await axios.get(`${baseUrl}/${id}`)
+  return data
+}
+
+const create = async blog => {
   const config = {
     headers: { Authorization: token }
   }
@@ -28,7 +33,7 @@ const put = async (id, newBlog) => {
   return data
 }
 
-const del = async (id) => {
+const del = async id => {
   const config = {
     headers: { Authorization: token }
   }
@@ -36,4 +41,4 @@ const del = async (id) => {
   return data
 }
 
-export default { getAll, create, setToken, put, del }
+export default { getAll, getById, create, setToken, put, del }
