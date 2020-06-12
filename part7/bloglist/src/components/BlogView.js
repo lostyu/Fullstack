@@ -40,6 +40,17 @@ const BlogView = () => {
         <button onClick={() => handleLike(blog.id)}>like</button>
       </p>
       <p>added by {blog.user.username}</p>
+
+      {blog.comments && (
+        <>
+          <h3>comments</h3>
+          <ul>
+            {blog.comments.map(comment => (
+              <li key={Math.random() + comment}>{comment}</li>
+            ))}
+          </ul>
+        </>
+      )}
     </div>
   )
 }

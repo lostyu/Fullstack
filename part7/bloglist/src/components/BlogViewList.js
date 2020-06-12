@@ -13,7 +13,7 @@ const BlogViewList = () => {
   }, [])
 
   return (
-    <table>
+    <table className="table">
       <tbody>
         {blogs.map(blog => (
           <tr key={blog.id}>

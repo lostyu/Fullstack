@@ -1,6 +1,11 @@
 import React, { useState, useEffect } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
-import { BrowserRouter as Router, Route, Switch } from 'react-router-dom'
+import {
+  BrowserRouter as Router,
+  Route,
+  Switch,
+  useHistory
+} from 'react-router-dom'
 
 import loginService from './services/login'
 
@@ -22,6 +27,7 @@ import './App.css'
 const App = () => {
   const dispatch = useDispatch()
   const user = useSelector(state => state.user)
+  const history = useHistory()
   const blogFormRef = React.createRef()
   const [username, setUsername] = useState('')
   const [password, setPassword] = useState('')
@@ -35,6 +41,7 @@ const App = () => {
 
   const handleLogout = () => {
     dispatch(removeUser())
+    history.replace('/')
   }
 
   const handleLogin = async ev => {
@@ -96,30 +103,28 @@ const App = () => {
   }
 
   return (
-    <Router>
-      <div id="testApp">
-        <Nav user={user} handleLogout={handleLogout} />
-        <h2>blog app</h2>
-        <Notifications />
+    <div id="testApp">
+      <Nav user={user} handleLogout={handleLogout} />
+      <h2>blog app</h2>
+      <Notifications />
 
-        <Switch>
-          <Route path="/blogs/:id">
-            <BlogView />
-          </Route>
-          <Route path="/users/:id">
-            <User />
-          </Route>
-          <Route path="/users">
-            <Users />
-          </Route>
-          <Route path="/">
-            {newBlogForm()}
-            {/* <BlogList /> */}
-            <BlogViewList />
-          </Route>
-        </Switch>
-      </div>
-    </Router>
+      <Switch>
+        <Route path="/blogs/:id">
+          <BlogView />
+        </Route>
+        <Route path="/users/:id">
+          <User />
+        </Route>
+        <Route path="/users">
+          <Users />
+        </Route>
+        <Route path="/">
+          {newBlogForm()}
+          {/* <BlogList /> */}
+          <BlogViewList />
+        </Route>
+      </Switch>
+    </div>
   )
 }
 
