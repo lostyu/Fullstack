@@ -11,6 +11,7 @@ const BlogView = () => {
   const [blog, setBlog] = useState(null)
   const params = useParams()
   const dispatch = useDispatch()
+  const [content, setContent] = useState('')
 
   useEffect(() => {
     blogService.getById(params.id).then(res => {
@@ -23,6 +24,13 @@ const BlogView = () => {
     dispatch(addLike(id, blog))
     dispatch(setMessage(`add like ${blog.title}`))
     setBlog({ ...blog, likes: blog.likes + 1 })
+  }
+
+  const handleComment = async ev => {
+    ev.preventDefault()
+    const newBlog = await blogService.addComment(blog.id, content)
+    setContent('')
+    setBlog(newBlog)
   }
 
   if (blog === null) {
@@ -44,6 +52,15 @@ const BlogView = () => {
       {blog.comments && (
         <>
           <h3>comments</h3>
+          <form onSubmit={handleComment}>
+            <input
+              value={content}
+              type="text"
+              name="content"
+              onChange={({ target }) => setContent(target.value)}
+            />
+            <button type="submit">add comment</button>
+          </form>
           <ul>
             {blog.comments.map(comment => (
               <li key={Math.random() + comment}>{comment}</li>
