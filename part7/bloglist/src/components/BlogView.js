@@ -7,6 +7,8 @@ import blogService from '../services/blogs'
 import { setMessage } from '../reducers/notificationReducer'
 import { addLike } from '../reducers/blogReducer'
 
+import { Button, Form, Col } from 'react-bootstrap'
+
 const BlogView = () => {
   const [blog, setBlog] = useState(null)
   const params = useParams()
@@ -45,22 +47,28 @@ const BlogView = () => {
       </p>
       <p>
         {blog.likes} like
-        <button onClick={() => handleLike(blog.id)}>like</button>
+        <Button onClick={() => handleLike(blog.id)}>like</Button>
       </p>
       <p>added by {blog.user.username}</p>
 
       {blog.comments && (
         <>
           <h3>comments</h3>
-          <form onSubmit={handleComment}>
-            <input
-              value={content}
-              type="text"
-              name="content"
-              onChange={({ target }) => setContent(target.value)}
-            />
-            <button type="submit">add comment</button>
-          </form>
+          <Form onSubmit={handleComment}>
+            <Form.Row className="align-items-center">
+              <Col xs="auto" className="my-1">
+                <Form.Control
+                  value={content}
+                  type="text"
+                  name="content"
+                  onChange={({ target }) => setContent(target.value)}
+                ></Form.Control>
+              </Col>
+              <Col xs="auto" className="my-1">
+                <Button type="submit">Comment</Button>
+              </Col>
+            </Form.Row>
+          </Form>
           <ul>
             {blog.comments.map(comment => (
               <li key={Math.random() + comment}>{comment}</li>

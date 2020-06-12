@@ -1,19 +1,19 @@
 import React, { useState, useEffect } from 'react'
 import { Link } from 'react-router-dom'
 
-import blogService from '../services/blogs'
+import { Table } from 'react-bootstrap'
 
-const BlogViewList = () => {
-  const [blogs, setBlogs] = useState([])
+const BlogViewList = ({ blogs }) => {
+  // const [blogs, setBlogs] = useState([])
 
-  useEffect(() => {
-    blogService.getAll().then(res => {
-      setBlogs(res)
-    })
-  }, [])
+  // useEffect(() => {
+  //   blogService.getAll().then(res => {
+  //     setBlogs(res)
+  //   })
+  // }, [])
 
   return (
-    <table className="table">
+    <Table striped bordered hover>
       <tbody>
         {blogs.map(blog => (
           <tr key={blog.id}>
@@ -23,7 +23,7 @@ const BlogViewList = () => {
           </tr>
         ))}
       </tbody>
-    </table>
+    </Table>
   )
 }
 

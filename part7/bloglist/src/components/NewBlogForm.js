@@ -1,10 +1,14 @@
 import React, { useState } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 
+import blogService from '../services/blogs'
+
 import { createBlog } from '../reducers/blogReducer'
 import { setMessage } from '../reducers/notificationReducer'
 
-const NewBlogForm = ({ refProps }) => {
+import { Button, Form, Row, Col } from 'react-bootstrap'
+
+const NewBlogForm = ({ refProps, handleState }) => {
   const user = useSelector(state => state.user)
   const dispatch = useDispatch()
   const defaultBlog = { title: '', author: '', url: '' }
@@ -17,53 +21,59 @@ const NewBlogForm = ({ refProps }) => {
     })
   }
 
-  const handleCreate = ev => {
+  const handleCreate = async ev => {
     ev.preventDefault()
 
-    dispatch(createBlog(blog))
-    setBlog(defaultBlog)
-    refProps.current.toggleVisible()
+    try {
+      const newBlog = await blogService.create(blog)
+      setBlog(defaultBlog)
+      refProps.current.toggleVisible()
 
-    dispatch(setMessage(`a new blog added! by ${user.username}`))
+      dispatch(setMessage(`a new blog added! by ${user.username}`))
+      handleState(newBlog)
+    } catch (e) {
+      // console.log(e.response)
+      dispatch(setMessage(e.response.data.error))
+    }
   }
 
   return (
     <div className="testDiv">
-      <form onSubmit={handleCreate}>
-        <div>
-          title:
-          <input
-            id="title"
+      <Form onSubmit={handleCreate}>
+        <Form.Group>
+          <Form.Label>title： </Form.Label>
+          <Form.Control
+            placeholder="Title"
             type="text"
             value={blog.title}
             name="title"
             onChange={updateField}
           />
-        </div>
-        <div>
-          author:
-          <input
-            id="author"
+        </Form.Group>
+        <Form.Group>
+          <Form.Label>author： </Form.Label>
+          <Form.Control
+            placeholder="Author"
             type="text"
             value={blog.author}
             name="author"
             onChange={updateField}
           />
-        </div>
-        <div>
-          url:
-          <input
-            id="url"
+        </Form.Group>
+        <Form.Group>
+          <Form.Label>url： </Form.Label>
+          <Form.Control
+            placeholder="Url"
             type="text"
             value={blog.url}
             name="url"
             onChange={updateField}
           />
-        </div>
-        <button id="test-btn" type="submit">
-          create
-        </button>
-      </form>
+        </Form.Group>
+        <Form.Group>
+          <Button type="submit">Create</Button>
+        </Form.Group>
+      </Form>
     </div>
   )
 }

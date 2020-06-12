@@ -6,11 +6,13 @@ import {
   Switch,
   useHistory
 } from 'react-router-dom'
+import { Card, Button, Row, Col, Form } from 'react-bootstrap'
 
 import loginService from './services/login'
+import blogService from './services/blogs'
 
 import BlogList from './components/BlogList'
-import Nav from './components/Nav'
+import Menu from './components/Menu'
 import NewBlogForm from './components/NewBlogForm'
 import Notifications from './components/Notifications'
 import Toggleable from './components/Toggleable'
@@ -31,6 +33,7 @@ const App = () => {
   const blogFormRef = React.createRef()
   const [username, setUsername] = useState('')
   const [password, setPassword] = useState('')
+  const [blogs, setBlogs] = useState([])
 
   useEffect(() => {
     const loggedUser = window.localStorage.getItem('loggedUser')
@@ -38,6 +41,12 @@ const App = () => {
       dispatch(addUser(JSON.parse(loggedUser)))
     }
   }, [dispatch])
+
+  useEffect(() => {
+    blogService.getAll().then(res => {
+      setBlogs(res)
+    })
+  }, [])
 
   const handleLogout = () => {
     dispatch(removeUser())
@@ -60,70 +69,98 @@ const App = () => {
     }
   }
 
+  const handleState = newBlog => {
+    setBlogs([...blogs, newBlog])
+  }
+
   const newBlogForm = () => (
     <Toggleable buttonLabel="new blog" ref={blogFormRef}>
-      <NewBlogForm refProps={blogFormRef} />
+      <NewBlogForm handleState={handleState} refProps={blogFormRef} />
     </Toggleable>
   )
 
   const loginForm = () => (
-    <form id="test-loginForm" onSubmit={handleLogin}>
-      <div>
-        username
-        <input
-          id="test-username"
-          type="text"
-          value={username}
-          name="Username"
-          onChange={({ target }) => setUsername(target.value)}
-        />
-      </div>
-      <div>
-        password
-        <input
-          id="test-password"
-          type="password"
-          value={password}
-          name="Password"
-          onChange={({ target }) => setPassword(target.value)}
-        />
-      </div>
-      <button type="submit">login</button>
-    </form>
+    <Form onSubmit={handleLogin}>
+      <Form.Group as={Row}>
+        <Form.Label column sm={3}>
+          Username
+        </Form.Label>
+        <Col sm={9}>
+          <Form.Control
+            value={username}
+            name="Username"
+            type="text"
+            placeholder="username"
+            onChange={({ target }) => setUsername(target.value)}
+          />
+        </Col>
+      </Form.Group>
+      <Form.Group as={Row}>
+        <Form.Label column sm={3}>
+          Password
+        </Form.Label>
+        <Col sm={9}>
+          <Form.Control
+            type="password"
+            value={password}
+            name="Password"
+            onChange={({ target }) => setPassword(target.value)}
+            placeholder="password"
+          />
+        </Col>
+      </Form.Group>
+      <Form.Group as={Row}>
+        <Form.Label column sm={3}></Form.Label>
+        <Col sm={9}>
+          <Button block type="submit">
+            Login
+          </Button>
+        </Col>
+      </Form.Group>
+    </Form>
   )
 
   if (user === null) {
     return (
-      <div>
-        <h2>Log in to application</h2>
+      <div className="container">
         <Notifications />
-        {loginForm()}
+
+        <Row className="loginBox">
+          <Col md={{ span: 6, offset: 3 }}>
+            <Card className="">
+              <Card.Header>Log in to application</Card.Header>
+              <Card.Body>{loginForm()}</Card.Body>
+            </Card>
+          </Col>
+        </Row>
       </div>
     )
   }
 
   return (
-    <div id="testApp">
-      <Nav user={user} handleLogout={handleLogout} />
-      <h2>blog app</h2>
+    <div className="container">
       <Notifications />
+      <div id="testApp">
+        <Menu user={user} handleLogout={handleLogout} />
 
-      <Switch>
-        <Route path="/blogs/:id">
-          <BlogView />
-        </Route>
-        <Route path="/users/:id">
-          <User />
-        </Route>
-        <Route path="/users">
-          <Users />
-        </Route>
-        <Route path="/">
-          {newBlogForm()}
-          {/* <BlogList /> */}
-          <BlogViewList />
-        </Route>
-      </Switch>
+        <Switch>
+          <Route path="/blogs/:id">
+            <BlogView />
+          </Route>
+          <Route path="/users/:id">
+            <User />
+          </Route>
+          <Route path="/users">
+            <Users />
+          </Route>
+          <Route path="/">
+            <h2>Blogs</h2>
+            {newBlogForm()}
+            {/* <BlogList /> */}
+            <BlogViewList blogs={blogs} />
+          </Route>
+        </Switch>
+      </div>
     </div>
   )
 }

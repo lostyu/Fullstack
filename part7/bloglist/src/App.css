@@ -59,7 +59,7 @@
   background-color: #ddd;
 }
 
-.table{
+/* .table{
   width: 100%;
   border: 1px solid #ddd;
 }
@@ -68,4 +68,8 @@
 }
 .table tr:nth-child(odd){
   background: #ddd
+} */
+
+.loginBox {
+
 }
